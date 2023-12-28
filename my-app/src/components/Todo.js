@@ -21,6 +21,9 @@ function Todo(){
     const [newTaskStartDate, setNewTaskStartDate] = useState('');
     const [newTaskDeadline, setNewTaskDeadline] = useState('');
     const [newTaskStatus, setNewTaskStatus] = useState('');
+    const [taskNameFilled, setTaskNameFilled] = useState(true);
+    const [startDateFilled, setStartDateFilled] = useState(true);
+    const [deadlineFilled, setDeadlineFilled] = useState(true);
 
     const handleAddNewProjectClick = () => {
         setProjPopup(true);
@@ -49,6 +52,26 @@ function Todo(){
     }
 
     const handleAddTodo = () => {
+        if (!newTaskName.trim()) {
+            setTaskNameFilled(false);
+            return;
+          } else {
+            setTaskNameFilled(true);
+          }
+      
+          if (!newTaskStartDate) {
+            setStartDateFilled(false);
+            return;
+          } else {
+            setStartDateFilled(true);
+          }
+      
+          if (!newTaskDeadline) {
+            setDeadlineFilled(false);
+            return;
+          } else {
+            setDeadlineFilled(true);
+          }
         const newTask = {
           name: newTaskName,
           startDate: newTaskStartDate,
@@ -295,7 +318,7 @@ function Todo(){
                         <div className='popup_head'>
                             <span className='popup_title'>Add New Project</span>
                             <span className="close-popup" onClick={handleClosePopup}>&times;</span>
-                        </div>
+                        </div><br/><br/>
                         <div className='popup_main'>
                             <input className='form-control' placeholder='Enter Project Name' value={newProjectName} onChange={handleInputChange}/>
                         </div>
@@ -319,15 +342,18 @@ function Todo(){
                                 <label>Name of the Task</label>
                                 <input type='text' className='form-control' placeholder='Text' onChange={(e) => setNewTaskName(e.target.value)}/>
                             </div>
+                            {!taskNameFilled && <span style={{color:'red',fontSize:'11px'}}>Please fill the task name</span>}
                             <div className='task_dates'>
                                 <div className='row'>
                                     <div className='col-md-6 task_start_date'>
                                         <label>Start date</label>
                                         <input className='form-control' type='date' onChange={(e) => setNewTaskStartDate(e.target.value)}/>
+                                        {!startDateFilled && <span style={{color:'red',fontSize:'11px'}}>Please fill the start date</span>}
                                     </div>
                                     <div className='col-md-6 task_end_date'>
                                         <label>Deadline</label>
                                         <input className='form-control' type='date' onChange={(e) => setNewTaskDeadline(e.target.value)}/>
+                                        {!deadlineFilled && <span style={{color:'red',fontSize:'11px'}}>Please fill the deadline date</span>}
                                     </div>
                                 </div>
                             </div>
