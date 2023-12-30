@@ -45,6 +45,13 @@ function Todo(){
     };
 
     const handleTodoPopup = () => {
+        setNewTaskName('');
+        setNewTaskStartDate('');
+        setNewTaskDeadline('');
+        setNewTaskStatus('To Do');
+        setTaskNameFilled(true);
+        setStartDateFilled(true);
+        setDeadlineFilled(true);
         setTodoPopup(true);
     }
     const handleTodoClosePopup = () => {
@@ -85,8 +92,9 @@ function Todo(){
           updatedTasks[editTaskIndex] = newTask;
           setTasks(updatedTasks);
           setEditTaskIndex(null);
-        } else {
-          // Add a new task to the appropriate status
+        }
+        
+        else {
           switch (newTaskStatus) {
             case 'To Do':
               setTasks([...tasks, newTask]);
@@ -116,6 +124,7 @@ function Todo(){
         setEditTaskStatus(taskToEdit.status);
         setEdittodoPopup(true);
     };
+
 
     const handleSaveEditTodo = () => {
         const updatedTask = {
