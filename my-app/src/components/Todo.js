@@ -1,5 +1,6 @@
-import React,{useState} from 'react';
+import React,{useState, useEffect} from 'react';
 import { GoDotFill } from "react-icons/go";
+import axios from 'axios'
 
 function Todo(){
 
@@ -25,6 +26,12 @@ function Todo(){
     const [startDateFilled, setStartDateFilled] = useState(true);
     const [deadlineFilled, setDeadlineFilled] = useState(true);
 
+    useEffect(()=>{
+        axios.get('http://localhost:8585/')
+        .then(res => console.log(res))
+        .catch(err => console.log(err));
+    }, [])
+
     const handleAddNewProjectClick = () => {
         setProjPopup(true);
     };
@@ -48,7 +55,7 @@ function Todo(){
         setNewTaskName('');
         setNewTaskStartDate('');
         setNewTaskDeadline('');
-        setNewTaskStatus('To Do');
+        setNewTaskStatus('');
         setTaskNameFilled(true);
         setStartDateFilled(true);
         setDeadlineFilled(true);
@@ -79,13 +86,34 @@ function Todo(){
           } else {
             setDeadlineFilled(true);
           }
+
+        const taskId = Date.now().toString();
+
         const newTask = {
-          name: newTaskName,
-          startDate: newTaskStartDate,
-          deadline: newTaskDeadline,
-          status: newTaskStatus,
-          statusColor: newTaskStatus,
+            id: taskId,
+            name: newTaskName,
+            startDate: newTaskStartDate,
+            deadline: newTaskDeadline,
+            status: newTaskStatus,
         };
+
+        // axios.post('http://localhost:8585/addTask', {taskId,newTaskName,newTaskStartDate,newTaskDeadline,newTaskStatus})
+        // .then(res => {
+        //     console.log(res.data);
+        // })
+        // .catch(err => console.error(err));
+
+        axios.post('http://localhost:8585/addTask', {
+            newTaskName: newTaskName,
+            newTaskStartDate: newTaskStartDate,
+            newTaskDeadline: newTaskDeadline,
+            newTaskStatus: newTaskStatus
+        })
+        .then(res => {
+            console.log(res.data);
+        })
+        .catch(err => console.error(err));
+
       
         if (editTaskIndex !== null) {
           const updatedTasks = [...tasks];
@@ -117,23 +145,46 @@ function Todo(){
 
     const handleEditTodoPopup = (index) => {
         const taskToEdit = tasks[index];
-        setEditTaskIndex(index);
-        setEditTaskName(taskToEdit.name);
-        setEditTaskStartDate(taskToEdit.startDate);
-        setEditTaskDeadline(taskToEdit.deadline);
-        setEditTaskStatus(taskToEdit.status);
-        setEdittodoPopup(true);
-    };
+       console.log("Index:", index);
+    console.log("Task to Edit:", taskToEdit);
 
+    setEditTaskIndex(index);
+    setEditTaskName(taskToEdit.name);
+    setEditTaskStartDate(taskToEdit.startDate);
+    setEditTaskDeadline(taskToEdit.deadline);
+    setEditTaskStatus(taskToEdit.status);
+    setEdittodoPopup(true);
+    };
 
     const handleSaveEditTodo = () => {
         const updatedTask = {
-          name: editTaskName,
-          startDate: editTaskStartDate,
-          deadline: editTaskDeadline,
-          status: editTaskStatus,
-          statusColor: editTaskStatus,
+            id: editTaskIndex,
+            name: editTaskName,
+            startDate: editTaskStartDate,
+            deadline: editTaskDeadline,
+            status: editTaskStatus,
+            statusColor: editTaskStatus,
         };
+
+        console.log('Update values:', editTaskName, editTaskStartDate, editTaskDeadline, editTaskStatus, editTaskIndex);
+        axios.put('http://localhost:8585/update', {
+            editTaskName,
+            editTaskStartDate,
+            editTaskDeadline,
+            editTaskStatus,
+            editTaskIndex,
+        })
+        .then(res => {
+            console.log(res);
+            // Fetch updated data from the server after the update
+            axios.get('http://localhost:8585/')
+                .then(res => {
+                    console.log('Updated data from server:', res.data);
+                })
+                .catch(err => console.log(err));
+        })
+        .catch(err => console.log(err));
+
 
         let currentStatusTasks = [];
         switch (editTaskStatus) {
